@@ -10,8 +10,8 @@ class StartOnBootReceiver : BroadcastReceiver() {
         intent ?: return
 
         if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
-            Thread.sleep(5000)
             Consts.isAppStartedFromBroadcast = true
+            Thread.sleep(5000)
             val activityIntent = Intent(context, MainActivity::class.java)
             activityIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             context.startActivity(activityIntent)
