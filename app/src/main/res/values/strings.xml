@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Hello world</string>
+    <string name="app_name">6mSignage</string>
     <string name="browse_title">Videos by Your Company</string>
     <string name="related_movies">Related Videos</string>
     <string name="grid_view">Grid View</string>
@@ -16,4 +16,10 @@
     <!-- Error messages -->
     <string name="error_fragment_message">An error occurred</string>
     <string name="dismiss_error">Dismiss</string>
+
+<!--    Dialog exit-->
+    <string name="dialog_exit_exit">Re-installation</string>
+    <string name="dialog_exit_do_you_want_to_close_app">Do you want to re-install the app?</string>
+    <string name="dialog_exit_no">No</string>
+    <string name="dialog_exit_yes">Yes</string>
 </resources>
