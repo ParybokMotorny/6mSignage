@@ -1,6 +1,7 @@
 package com.digitalsln.project6mSignage
 
 import android.app.AlarmManager
+import android.app.AlertDialog
 import android.app.Dialog
 import android.app.PendingIntent
 import android.content.Context
@@ -19,14 +20,6 @@ class MainActivity : FragmentActivity() {
 
     private var _binding: ActivityMainBinding? = null
 
-    private val powerManager: PowerManager by lazy {
-        getSystemService(Context.POWER_SERVICE) as PowerManager
-    }
-
-    private val wakeLock: PowerManager.WakeLock by lazy {
-        powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "myapp:mywakelocktag")
-    }
-
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,10 +27,10 @@ class MainActivity : FragmentActivity() {
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        preventFromSleeping()
+        //preventFromSleeping()
         initWebView()
 
-        if(!Consts.isAppStartedFromBroadcast){
+        if (!Consts.isAppStartedFromBroadcast) {
             showExitDialog()
         }
     }
@@ -62,7 +55,9 @@ class MainActivity : FragmentActivity() {
         }
     }
 
-    private fun preventFromSleeping(){
+    private fun preventFromSleeping() {
+        val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+        val wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "myapp:mywakelocktag")
         wakeLock.acquire()
     }
 
@@ -80,29 +75,38 @@ class MainActivity : FragmentActivity() {
         System.exit(0)
     }
 
-    private fun showExitDialog(){
-        val dialogBinding = ResetAppDialogBinding.inflate(layoutInflater)
-
-        val dialog = Dialog(this)
-        dialog.setContentView(dialogBinding.root)
-
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        dialogBinding.run {
-            btnAccept.setOnClickListener {
-                dialog.dismiss()
+    private fun showExitDialog() {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.dialog_exit_exit)
+            .setMessage(R.string.dialog_exit_do_you_want_to_close_app)
+            .setPositiveButton(R.string.dialog_exit_yes) { _, _ ->
                 restartApp()
-            }
-            btnDecline.setOnClickListener {
-                dialog.dismiss()
-            }
-        }
+            }.setNegativeButton(R.string.dialog_exit_no) { _, _ -> }
+            .create()
+            .show()
 
-        dialog.show()
+        //        val dialogBinding = TstFileBinding.inflate(layoutInflater)
+//
+//        val dialog = Dialog(this)
+//        dialog.setContentView(dialogBinding.root)
+//
+//        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+//
+//        dialogBinding.run {
+//            btnAccept.setOnClickListener {
+//                dialog.dismiss()
+//                restartApp()
+//            }
+//            btnDecline.setOnClickListener {
+//                dialog.dismiss()
+//            }
+//        }
+//
+//        dialog.show()
     }
 
     override fun onDestroy() {
-        wakeLock.release()
+//        wakeLock.release()
         super.onDestroy()
     }
 
@@ -111,7 +115,7 @@ class MainActivity : FragmentActivity() {
         webView.settings.javaScriptCanOpenWindowsAutomatically = true
     }
 
-    companion object{
+    companion object {
         const val MAGICAL_NUMBER = 3
     }
 }
