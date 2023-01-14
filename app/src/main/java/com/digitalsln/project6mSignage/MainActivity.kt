@@ -20,6 +20,14 @@ class MainActivity : FragmentActivity() {
 
     private var _binding: ActivityMainBinding? = null
 
+    // values for non-sleeping
+    private val powerManager: PowerManager by lazy {
+        getSystemService(Context.POWER_SERVICE) as PowerManager
+    }
+    private val wakeLock: PowerManager.WakeLock by lazy {
+        powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "myapp:mywakelocktag")
+    }
+
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,7 +35,7 @@ class MainActivity : FragmentActivity() {
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //preventFromSleeping()
+        preventFromSleeping()
         initWebView()
 
         if (!Consts.isAppStartedFromBroadcast) {
@@ -56,8 +64,6 @@ class MainActivity : FragmentActivity() {
     }
 
     private fun preventFromSleeping() {
-        val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-        val wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "myapp:mywakelocktag")
         wakeLock.acquire()
     }
 
@@ -106,7 +112,7 @@ class MainActivity : FragmentActivity() {
     }
 
     override fun onDestroy() {
-//        wakeLock.release()
+        wakeLock.release()
         super.onDestroy()
     }
 
