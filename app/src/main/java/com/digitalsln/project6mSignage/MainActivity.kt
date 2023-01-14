@@ -34,12 +34,12 @@ class MainActivity : FragmentActivity() {
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        preventFromSleeping()
+        initWebView()
+
         if(!Consts.isAppStartedFromBroadcast){
             showExitDialog()
         }
-
-        preventFromSleeping()
-        initWebView()
     }
 
     override fun onResume() {
