@@ -54,7 +54,7 @@ class MainActivity : FragmentActivity() {
             settings.domStorageEnabled = true
 
             // code from stackoverflow to solve white screen in old api
-            settings.javaScriptEnabled = true
+//            settings.javaScriptEnabled = true
             settings.allowContentAccess = true
             binding.webView.webViewClient = WebViewClient()
 
