@@ -17,9 +17,22 @@
     <string name="error_fragment_message">An error occurred</string>
     <string name="dismiss_error">Dismiss</string>
 
-<!--    Dialog exit-->
+    <!--    Dialog exit-->
     <string name="dialog_exit_exit">Re-installation</string>
     <string name="dialog_exit_do_you_want_to_close_app">Do you want to re-install the app?</string>
     <string name="dialog_exit_no">No</string>
     <string name="dialog_exit_yes">Yes</string>
+    
+    <!--    Non auto setting dialog-->
+    <string name="reset_all_settings">Reset All settings</string>
+    <string name="play_mode">Play mode</string>
+    <string name="play">Play</string>
+    <!--    Non auto setting dialog-->
+
+    <!--    Play mode dialog-->
+    <string name="play_mode_dialog_real">Real</string>
+    <string name="play_mode_dialog_test">Test</string>
+    <string name="play_mode_dialog_play_mode">Play mode</string>
+    <!--    Play mode dialog-->
+
 </resources>

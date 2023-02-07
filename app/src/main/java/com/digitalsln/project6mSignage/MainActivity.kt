@@ -2,9 +2,12 @@ package com.digitalsln.project6mSignage
 
 import android.app.AlarmManager
 import android.app.AlertDialog
+import android.app.Dialog
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
@@ -13,6 +16,8 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.fragment.app.FragmentActivity
 import com.digitalsln.project6mSignage.databinding.ActivityMainBinding
+import com.digitalsln.project6mSignage.databinding.NonAutoSettingDialogBinding
+import com.digitalsln.project6mSignage.databinding.PlayModeDialogBinding
 
 
 class MainActivity : FragmentActivity() {
@@ -40,6 +45,8 @@ class MainActivity : FragmentActivity() {
         if (!Consts.isAppStartedFromBroadcast) {
             showExitDialog()
         }
+
+        binding.webView.loadUrl("https://test.6lb.menu/signage/1")
     }
 
     override fun onResume() {
@@ -52,19 +59,10 @@ class MainActivity : FragmentActivity() {
             settings.loadWithOverviewMode = false
             settings.useWideViewPort = false
             settings.domStorageEnabled = true
-
-            // code from stackoverflow to solve white screen in old api
-//            settings.javaScriptEnabled = true
             settings.allowContentAccess = true
             binding.webView.webViewClient = WebViewClient()
-
-//            settings.mixedContentMode = 0
-//            binding.webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
-
             setInitialScale(100)
             activateJS(this)
-            loadUrl("https://test.6lb.menu/signage/1")
-
         }
     }
 
@@ -87,14 +85,52 @@ class MainActivity : FragmentActivity() {
     }
 
     private fun showExitDialog() {
-        AlertDialog.Builder(this)
-            .setTitle(R.string.dialog_exit_exit)
-            .setMessage(R.string.dialog_exit_do_you_want_to_close_app)
-            .setPositiveButton(R.string.dialog_exit_yes) { _, _ ->
+
+        val dialogBinding = NonAutoSettingDialogBinding.inflate(layoutInflater)
+
+        val dialog = Dialog(this)
+        dialog.setContentView(dialogBinding.root)
+
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        dialogBinding.run {
+            playButton.setOnClickListener {
+                dialog.dismiss()
+            }
+            playModeButton.setOnClickListener {
+                dialog.dismiss()
+                showPlayModeDialog()
+            }
+            resetAllSettingsButton.setOnClickListener {
+                dialog.dismiss()
+                resetAllSettings()
                 restartApp()
-            }.setNegativeButton(R.string.dialog_exit_no) { _, _ -> }
-            .create()
-            .show()
+            }
+        }
+
+        dialog.show()
+    }
+
+    private fun showPlayModeDialog(){
+        val dialogBinding = PlayModeDialogBinding.inflate(layoutInflater)
+
+        val dialog = Dialog(this)
+        dialog.setContentView(dialogBinding.root)
+
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        dialogBinding.run {
+            realButton.setOnClickListener {
+                dialog.dismiss()
+                binding.webView.loadUrl("https://6lb.menu/signage")
+            }
+            testButton.setOnClickListener {
+                dialog.dismiss()
+                binding.webView.loadUrl("https://test.6lb.menu/signage")
+            }
+        }
+
+        dialog.show()
     }
 
     override fun onDestroy() {
@@ -105,6 +141,10 @@ class MainActivity : FragmentActivity() {
     private fun activateJS(webView: WebView) {
         webView.settings.javaScriptEnabled = true
         webView.settings.javaScriptCanOpenWindowsAutomatically = true
+    }
+
+    private fun resetAllSettings(){
+        // TODO
     }
 
     companion object {
