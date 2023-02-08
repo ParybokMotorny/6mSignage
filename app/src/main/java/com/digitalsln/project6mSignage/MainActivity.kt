@@ -18,7 +18,6 @@ import com.digitalsln.project6mSignage.databinding.ActivityMainBinding
 import com.digitalsln.project6mSignage.databinding.HandMadeStartAppDialogBinding
 import com.digitalsln.project6mSignage.databinding.PlayModeDialogBinding
 
-
 class MainActivity : FragmentActivity() {
 
     private var _binding: ActivityMainBinding? = null
@@ -42,10 +41,8 @@ class MainActivity : FragmentActivity() {
         initWebView()
 
         if (!Consts.isAppStartedFromBroadcast) {
-            showHandmadeStartAppDialog()
+            showHandMadeStartAppDialog()
         }
-
-        binding.webView.loadUrl("https://test.6lb.menu/signage/1")
     }
 
     override fun onResume() {
@@ -83,7 +80,7 @@ class MainActivity : FragmentActivity() {
         System.exit(0)
     }
 
-    private fun showHandmadeStartAppDialog() {
+    private fun showHandMadeStartAppDialog() {
         val dialogBinding = HandMadeStartAppDialogBinding.inflate(layoutInflater)
 
         val dialog = Dialog(this)
@@ -92,8 +89,10 @@ class MainActivity : FragmentActivity() {
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         dialogBinding.run {
+
             playButton.setOnClickListener {
                 dialog.dismiss()
+                binding.webView.loadUrl("https://test.6lb.menu/signage/1")
             }
             playModeButton.setOnClickListener {
                 dialog.dismiss()
@@ -111,12 +110,26 @@ class MainActivity : FragmentActivity() {
     private fun showPlayModeDialog() {
         val dialogBinding = PlayModeDialogBinding.inflate(layoutInflater)
 
+        val choice = loadPreferences(getPreferences(Context.MODE_PRIVATE))
+
         val dialog = Dialog(this)
         dialog.setContentView(dialogBinding.root)
 
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         dialogBinding.run {
+
+            when (choice) {
+                PlayModeDialogChoice.REAL -> {
+                    realButton.background = getDrawable(R.drawable.border_ginger_background)
+                    testButton.background = getDrawable(R.drawable.border)
+                }
+                PlayModeDialogChoice.TEST -> {
+                    realButton.background = getDrawable(R.drawable.border)
+                    testButton.background = getDrawable(R.drawable.border_ginger_background)
+                }
+            }
+
             realButton.setOnClickListener {
                 dialog.dismiss()
                 savePreferences(getPreferences(Context.MODE_PRIVATE), PlayModeDialogChoice.REAL)
@@ -124,7 +137,7 @@ class MainActivity : FragmentActivity() {
             }
             testButton.setOnClickListener {
                 dialog.dismiss()
-                savePreferences(getPreferences(Context.MODE_PRIVATE), PlayModeDialogChoice.REAL)
+                savePreferences(getPreferences(Context.MODE_PRIVATE), PlayModeDialogChoice.TEST)
                 binding.webView.loadUrl("https://test.6lb.menu/signage")
             }
         }
@@ -134,14 +147,16 @@ class MainActivity : FragmentActivity() {
 
     private fun showResetSettingsDialog() {
         AlertDialog.Builder(this)
-            .setTitle(R.string.dialog_exit_exit)
             .setMessage(R.string.dialog_exit_do_you_want_to_close_app)
             .setPositiveButton(R.string.dialog_exit_yes) { _, _ ->
                 resetAllSettings()
                 restartApp()
-            }.setNegativeButton(R.string.dialog_exit_no) { _, _ -> }
+            }.setNegativeButton(R.string.dialog_exit_no) { _, _ ->
+                showHandMadeStartAppDialog()
+            }
             .create()
             .show()
+
     }
 
     override fun onDestroy() {
