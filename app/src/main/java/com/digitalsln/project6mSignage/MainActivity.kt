@@ -89,6 +89,7 @@ class MainActivity : FragmentActivity() {
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         dialogBinding.run {
+            playButton.requestFocus()
 
             playButton.setOnClickListener {
                 dialog.dismiss()
@@ -110,7 +111,7 @@ class MainActivity : FragmentActivity() {
     private fun showPlayModeDialog() {
         val dialogBinding = PlayModeDialogBinding.inflate(layoutInflater)
 
-        val choice = loadPreferences(getPreferences(Context.MODE_PRIVATE))
+        val choice = loadPlayModePreferences(getPreferences(Context.MODE_PRIVATE))
 
         val dialog = Dialog(this)
         dialog.setContentView(dialogBinding.root)
@@ -121,23 +122,21 @@ class MainActivity : FragmentActivity() {
 
             when (choice) {
                 PlayModeDialogChoice.REAL -> {
-                    realButton.background = getDrawable(R.drawable.border_ginger_background)
-                    testButton.background = getDrawable(R.drawable.border)
+                    realButton.requestFocus()
                 }
                 PlayModeDialogChoice.TEST -> {
-                    realButton.background = getDrawable(R.drawable.border)
-                    testButton.background = getDrawable(R.drawable.border_ginger_background)
+                    testButton.requestFocus()
                 }
             }
 
             realButton.setOnClickListener {
                 dialog.dismiss()
-                savePreferences(getPreferences(Context.MODE_PRIVATE), PlayModeDialogChoice.REAL)
+                savePlayModePreferences(getPreferences(Context.MODE_PRIVATE), PlayModeDialogChoice.REAL)
                 binding.webView.loadUrl("https://6lb.menu/signage")
             }
             testButton.setOnClickListener {
                 dialog.dismiss()
-                savePreferences(getPreferences(Context.MODE_PRIVATE), PlayModeDialogChoice.TEST)
+                savePlayModePreferences(getPreferences(Context.MODE_PRIVATE), PlayModeDialogChoice.TEST)
                 binding.webView.loadUrl("https://test.6lb.menu/signage")
             }
         }
@@ -173,20 +172,20 @@ class MainActivity : FragmentActivity() {
         // TODO
     }
 
-    private fun savePreferences(sharedPref: SharedPreferences, choice: PlayModeDialogChoice) {
+    private fun savePlayModePreferences(sharedPref: SharedPreferences, choice: PlayModeDialogChoice) {
         val editor = sharedPref.edit()
-        editor.putInt(CHOICE_CODE, choice.code)
+        editor.putInt(PLAY_MODE_CHOICE_CODE, choice.code)
         editor.apply()
     }
 
-    private fun loadPreferences(sharedPref: SharedPreferences): PlayModeDialogChoice {
-        val choice = sharedPref.getInt(CHOICE_CODE, 0)
+    private fun loadPlayModePreferences(sharedPref: SharedPreferences): PlayModeDialogChoice {
+        val choice = sharedPref.getInt(PLAY_MODE_CHOICE_CODE, 0)
         return PlayModeDialogChoice.getChoice(choice)
     }
 
     companion object {
         const val MAGICAL_NUMBER = 3
 
-        const val CHOICE_CODE = "8"
+        const val PLAY_MODE_CHOICE_CODE = "8"
     }
 }
