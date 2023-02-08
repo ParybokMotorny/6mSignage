@@ -6,17 +6,16 @@ import android.app.Dialog
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
-import android.view.View
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.fragment.app.FragmentActivity
 import com.digitalsln.project6mSignage.databinding.ActivityMainBinding
-import com.digitalsln.project6mSignage.databinding.NonAutoSettingDialogBinding
+import com.digitalsln.project6mSignage.databinding.HandMadeStartAppDialogBinding
 import com.digitalsln.project6mSignage.databinding.PlayModeDialogBinding
 
 
@@ -43,7 +42,7 @@ class MainActivity : FragmentActivity() {
         initWebView()
 
         if (!Consts.isAppStartedFromBroadcast) {
-            showExitDialog()
+            showHandmadeStartAppDialog()
         }
 
         binding.webView.loadUrl("https://test.6lb.menu/signage/1")
@@ -84,9 +83,8 @@ class MainActivity : FragmentActivity() {
         System.exit(0)
     }
 
-    private fun showExitDialog() {
-
-        val dialogBinding = NonAutoSettingDialogBinding.inflate(layoutInflater)
+    private fun showHandmadeStartAppDialog() {
+        val dialogBinding = HandMadeStartAppDialogBinding.inflate(layoutInflater)
 
         val dialog = Dialog(this)
         dialog.setContentView(dialogBinding.root)
@@ -103,15 +101,14 @@ class MainActivity : FragmentActivity() {
             }
             resetAllSettingsButton.setOnClickListener {
                 dialog.dismiss()
-                resetAllSettings()
-                restartApp()
+                showResetSettingsDialog()
             }
         }
 
         dialog.show()
     }
 
-    private fun showPlayModeDialog(){
+    private fun showPlayModeDialog() {
         val dialogBinding = PlayModeDialogBinding.inflate(layoutInflater)
 
         val dialog = Dialog(this)
@@ -122,15 +119,29 @@ class MainActivity : FragmentActivity() {
         dialogBinding.run {
             realButton.setOnClickListener {
                 dialog.dismiss()
+                savePreferences(getPreferences(Context.MODE_PRIVATE), PlayModeDialogChoice.REAL)
                 binding.webView.loadUrl("https://6lb.menu/signage")
             }
             testButton.setOnClickListener {
                 dialog.dismiss()
+                savePreferences(getPreferences(Context.MODE_PRIVATE), PlayModeDialogChoice.REAL)
                 binding.webView.loadUrl("https://test.6lb.menu/signage")
             }
         }
 
         dialog.show()
+    }
+
+    private fun showResetSettingsDialog() {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.dialog_exit_exit)
+            .setMessage(R.string.dialog_exit_do_you_want_to_close_app)
+            .setPositiveButton(R.string.dialog_exit_yes) { _, _ ->
+                resetAllSettings()
+                restartApp()
+            }.setNegativeButton(R.string.dialog_exit_no) { _, _ -> }
+            .create()
+            .show()
     }
 
     override fun onDestroy() {
@@ -143,11 +154,24 @@ class MainActivity : FragmentActivity() {
         webView.settings.javaScriptCanOpenWindowsAutomatically = true
     }
 
-    private fun resetAllSettings(){
+    private fun resetAllSettings() {
         // TODO
+    }
+
+    private fun savePreferences(sharedPref: SharedPreferences, choice: PlayModeDialogChoice) {
+        val editor = sharedPref.edit()
+        editor.putInt(CHOICE_CODE, choice.code)
+        editor.apply()
+    }
+
+    private fun loadPreferences(sharedPref: SharedPreferences): PlayModeDialogChoice {
+        val choice = sharedPref.getInt(CHOICE_CODE, 0)
+        return PlayModeDialogChoice.getChoice(choice)
     }
 
     companion object {
         const val MAGICAL_NUMBER = 3
+
+        const val CHOICE_CODE = "8"
     }
 }
