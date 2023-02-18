@@ -32,6 +32,8 @@ class MainActivity : FragmentActivity() {
 
     private val binding get() = _binding!!
 
+    private var dialogMain: Dialog? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
@@ -84,6 +86,7 @@ class MainActivity : FragmentActivity() {
         val dialogBinding = HandMadeStartAppDialogBinding.inflate(layoutInflater)
 
         val dialog = Dialog(this)
+        dialogMain = dialog
         dialog.setContentView(dialogBinding.root)
 
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -96,11 +99,9 @@ class MainActivity : FragmentActivity() {
                 binding.webView.loadUrl("https://test.6lb.menu/signage/1")
             }
             playModeButton.setOnClickListener {
-                dialog.dismiss()
                 showPlayModeDialog()
             }
             resetAllSettingsButton.setOnClickListener {
-                dialog.dismiss()
                 showResetSettingsDialog()
             }
         }
@@ -108,7 +109,8 @@ class MainActivity : FragmentActivity() {
         dialog.show()
     }
 
-    private fun showPlayModeDialog() {
+    private fun showPlayModeDialog(){
+
         val dialogBinding = PlayModeDialogBinding.inflate(layoutInflater)
 
         val choice = loadPlayModePreferences(getPreferences(Context.MODE_PRIVATE))
@@ -133,11 +135,13 @@ class MainActivity : FragmentActivity() {
                 dialog.dismiss()
                 savePlayModePreferences(getPreferences(Context.MODE_PRIVATE), PlayModeDialogChoice.REAL)
                 binding.webView.loadUrl("https://6lb.menu/signage")
+                dialogMain?.dismiss()
             }
             testButton.setOnClickListener {
                 dialog.dismiss()
                 savePlayModePreferences(getPreferences(Context.MODE_PRIVATE), PlayModeDialogChoice.TEST)
                 binding.webView.loadUrl("https://test.6lb.menu/signage")
+                dialogMain?.dismiss()
             }
         }
 
@@ -155,7 +159,6 @@ class MainActivity : FragmentActivity() {
             }
             .create()
             .show()
-
     }
 
     override fun onDestroy() {
@@ -169,7 +172,9 @@ class MainActivity : FragmentActivity() {
     }
 
     private fun resetAllSettings() {
-        // TODO
+        binding.webView.clearCache(true)
+        binding.webView.clearHistory()
+        binding.webView.clearFormData()
     }
 
     private fun savePlayModePreferences(sharedPref: SharedPreferences, choice: PlayModeDialogChoice) {
