@@ -176,6 +176,8 @@ class MainActivity : FragmentActivity() {
             clearCache(true)
             clearHistory()
             clearFormData()
+            clearMatches()
+            clearSslPreferences()
         }
     }
 
