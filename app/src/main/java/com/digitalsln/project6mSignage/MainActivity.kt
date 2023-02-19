@@ -172,9 +172,11 @@ class MainActivity : FragmentActivity() {
     }
 
     private fun resetAllSettings() {
-        binding.webView.clearCache(true)
-        binding.webView.clearHistory()
-        binding.webView.clearFormData()
+        binding.webView.run{
+            clearCache(true)
+            clearHistory()
+            clearFormData()
+        }
     }
 
     private fun savePlayModePreferences(sharedPref: SharedPreferences, choice: PlayModeDialogChoice) {
